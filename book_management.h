@@ -1,4 +1,4 @@
-#ifndef BOOK_MANAGEMENT_GUARD__H 
+#ifndef BOOK_MANAGEMENT_GUARD__H
 #define BOOK_MANAGEMENT_GUARD__H
 
 #include <stdio.h>
@@ -12,19 +12,19 @@
 
 #define Max 1000
 typedef struct _Book {
-	    unsigned int id; //Book ID
-		char title[Max]; //book title
-		char authors[Max]; //comma separated list of authors
-		unsigned int year; // year of publication
-		unsigned int copies; //number of copies the library has
-		struct _Book *next;
+    unsigned int id; //Book ID
+    char *title; //book title
+    char *authors; //comma separated list of authors
+    unsigned int year; // year of publication
+    unsigned int copies; //number of copies the library has
+    struct _Book *next;
 }Book;
 
 typedef struct _BookArray {
-	 Book* array; // pointer to array (or linked list) of struct Book.
-	 unsigned int length; // number of elements in the (Book*) array 
+    Book* array; // pointer to array (or linked list) of struct Book.
+    unsigned int length; // number of elements in the (Book*) array
 }BookArray;
-int count;//Array length
+
 //saves the database of books in the specified file
 //returns 0 if books were stored correctly, or an error code otherwise
 int store_books(FILE *file, BookArray *p);
