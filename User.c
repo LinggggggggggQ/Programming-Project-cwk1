@@ -1,10 +1,17 @@
 #include "User.h"
 #include "book_management.h"
-#include "configure.h"
+
+#ifdef PARAM_SUP
+extern char* _USER_BOOK_PATH;
+#endif
 
 user *init_userbook (FILE *file)
 {
+#ifdef PARAM_SUP
+    file = fopen(_USER_BOOK_PATH,"r");
+#elif
     file = fopen(PATH_USER_BOOK,"r");
+#endif
     user *head = (user*)malloc(sizeof(user));
     //从文件读入用户所借书籍
     fscanf(file, "%s %s %s %s", head->account, head->book1, head->book2, head->book3);
@@ -34,7 +41,11 @@ user *init_userbook (FILE *file)
 //将用户所借书籍读入指定文件
 int store_books_user(FILE *file, user *book)
 {
-    file = fopen(PATH_USER_BOOK, "w");
+#ifdef PARAM_SUP
+    file = fopen(_USER_BOOK_PATH,"w");
+#elif
+    file = fopen(PATH_USER_BOOK,"w");
+#endif
     user *temp = book;
     while(temp != NULL)
     {
