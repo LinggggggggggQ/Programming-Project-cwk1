@@ -1,12 +1,20 @@
 #include "Login_and_register.h"
 #include "configure.h"
 char temp[Max];//临时的字符数组
+#ifdef PARAM_SUP
+extern char* _USER_INFO_PATH;
+#endif
+
 //注册函数
 char *Register(char *name)
 {
     bookuser a,b;//a用来储存现有的账号密码,b用来储存以前的账号密码
     FILE *fp;
+#ifdef PARAM_SUP
+    fp = fopen(_USER_INFO_PATH,"r");
+#elif
     fp = fopen(PATH_USERINFO,"r");
+#endif
     fscanf(fp, "%s %s", b.username, b.password);//读一个结构体字符块到b
     printf("Please enter a username: ");
     scanf("%s", a.username);//输入用户名
@@ -41,7 +49,11 @@ char *Register(char *name)
     {
         if(strcmp(a.password, temp) == 0)//密码相等
         {
-            fp = fopen(PATH_USERINFO, "a");
+#ifdef PARAM_SUP
+            fp = fopen(_USER_INFO_PATH,"a");
+#elif
+            fp = fopen(PATH_USERINFO,"a");
+#endif
             fprintf(fp, "%s %s\n", a.username, a.password);
             printf("\nregistration success!\n\n");
             fclose(fp);
@@ -68,7 +80,11 @@ char *Login(char *name)
 {
     bookuser a,b;//a用来储存已有的用户名，b用来储存输入的
     FILE *fp = NULL;
-    fp = fopen(PATH_USERINFO, "r");
+#ifdef PARAM_SUP
+    fp = fopen(_USER_INFO_PATH,"r");
+#elif
+    fp = fopen(PATH_USERINFO,"r");
+#endif
     fscanf(fp, "%s %s", a.username, a.password);
     printf("Please enter your username: ");
     scanf("%s", b.username);
