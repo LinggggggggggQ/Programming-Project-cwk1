@@ -65,4 +65,6 @@ void free_book(BookArray *head);//Release list
 void search_for_book();
 void display_all_books();
 void book_manager();
+void new_array(char *string,int flag);
+bool check_book(char *string);
 #endif
