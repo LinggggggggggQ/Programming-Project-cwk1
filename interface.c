@@ -3,9 +3,12 @@
 #include "book_management.h"
 #include "Login_and_register.h"
 #include "User.h"
-#include "configure.h"
 int st;
 char name[Max];
+#ifdef PARAM_SUP
+extern char* _USER_BOOK_PATH;
+#endif
+
 //借阅函数
 void user_interface(char *name)
 {
@@ -28,7 +31,11 @@ void user_interface(char *name)
             case '1':
             {
                 FILE *file;
+#ifdef PARAM_SUP
+                file = fopen(_USER_BOOK_PATH, "a");
+#elif
                 file = fopen(PATH_USER_BOOK, "a");
+#endif
                 fprintf(file, "%s %s %s %s\n", name, "empty", "empty", "empty");
                 fclose(file);
                 //初始化用户所借书籍
@@ -40,7 +47,11 @@ void user_interface(char *name)
                 //输入所借书的书名
                 scanf("%s", string);
                 getchar();
-                borrow_book(temp, string);
+                if(check_book(string))
+                    borrow_book(temp, string);
+                else
+                    printf("Book is not exist\n");
+                new_array(string,0);
                 store_books_user(file, temp);
                 free_user(temp);
                 break;
@@ -56,7 +67,11 @@ void user_interface(char *name)
                 char string[Max];
                 scanf("%s", string);
                 getchar();
-                return_book(temp, string);
+                if(check_book(string))
+                    return_book(temp, string);
+                else
+                    printf("Book is not exist\n");
+                new_array(string,1);
                 store_books_user(file, temp);
                 free_user(temp);
                 break;
@@ -83,7 +98,7 @@ void user_interface(char *name)
     }
 }
 
-void run_interface()
+void run_interface(char* bookDatPath, char* userInfoPath, char* userBookPath)
 {
     st = 0;
     while(st == 0)
