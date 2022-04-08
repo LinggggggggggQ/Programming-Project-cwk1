@@ -1,11 +1,17 @@
 #include "book_management.h"
-#include "configure.h"
 
 int count;//Array length
+#ifdef PARAM_SUP
+extern char* _BOOK_DATA_PATH;
+#endif
 
 int load_books(FILE *file, BookArray *p)
 {
+#ifdef PARAM_SUP
+    file = fopen(_BOOK_DATA_PATH, "r");
+#elif
     file = fopen(PATH_BOOK_MANAGEMENT, "r");
+#endif
     count = 0;
     if(!file)
     {
@@ -41,7 +47,11 @@ int load_books(FILE *file, BookArray *p)
 }
 int store_books(FILE *file, BookArray *p)
 {
+#ifdef PARAM_SUP
+    file = fopen(_BOOK_DATA_PATH, "w");
+#elif
     file = fopen(PATH_BOOK_MANAGEMENT, "w");
+#endif
     if(file == NULL)
         return -1;
     Book *temp = p->array;
@@ -60,13 +70,14 @@ int store_books(FILE *file, BookArray *p)
 }
 int add_book(Book *book)
 {
-    while(book->next)
-        book = book->next;
+    Book *p = book;
+    while(p->next)
+        p = p->next;
     Book *temp = (Book*)malloc(sizeof(Book));
     temp->title = (char*) malloc(sizeof (char)*Max);
     temp->authors = (char *) malloc(sizeof (char )*Max);
-    printf("ID:%d\n", book->id + 1);
-    temp->id = book->id + 1;
+    printf("ID:%d\n",p->id + 1);
+    temp->id = p->id + 1;
     printf("Title:");
     scanf("%s", temp->title);
     getchar();
@@ -80,7 +91,7 @@ int add_book(Book *book)
     scanf("%d", &(temp->copies));
     getchar();
     temp->next = NULL;
-    book->next = temp;
+    p->next = temp;
     return 0;
 }
 int remove_book(Book *book)
@@ -281,6 +292,42 @@ void display_all_books()
     display_book(temp);
     free_book(temp);
     return;
+}
+void new_array(char *string,int flag)
+{
+    FILE *f;
+    BookArray *p= (BookArray*)malloc(sizeof(BookArray));
+    load_books(f,p);
+    Book *p1 = p->array->next;
+    while(p1)
+    {
+        if(!strcmp(string,p1->title))
+        {
+            if(flag)//还书
+                p1->copies++;
+            if(!flag)//借书
+                p1->copies--;
+            break;
+        }
+        p1=p1->next;
+    }
+    store_books(f,p);
+    free_book(p);
+}
+bool check_book(char *string)
+{
+    FILE *f;
+    BookArray *p= (BookArray*)malloc(sizeof(BookArray));
+    load_books(f,p);
+    Book *p1 = p->array->next;
+    while(p1)
+    {
+        if(!strcmp(string,p1->title))
+            return true;
+        p1=p1->next;
+    }
+    free_book(p);
+    return false;
 }
 //书籍管理界面
 void book_manager()
